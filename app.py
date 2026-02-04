@@ -27,15 +27,12 @@ def index():
 def login():
     if request.method == "POST":
 
-        # Recogemos datos del formulario
         usuario = request.form["user"]
         password = request.form["password"]
 
-        # Conectamos a la BD
         conn = conectarCampus()
         cursor = conn.cursor()
 
-        # Buscamos si existe un usuario con ese nombre y password
         cursor.execute(
             "SELECT * FROM users WHERE user_name = %s AND password = %s",
             (usuario, password)
@@ -46,7 +43,7 @@ def login():
         cursor.close()
         conn.close()
 
-        # Si existe, mostramos sus datos
+        # Si el usuario existe
         if user:
             return render_template(
                 "user.html",
@@ -55,9 +52,12 @@ def login():
                 email=user[3]
             )
         else:
-            return "Usuario o contraseña incorrectos"
+            # ❌ Login incorrecto → volvemos al login con mensaje
+            return render_template(
+                "login.html",
+                error="Usuario o contraseña incorrectos"
+            )
 
-    # Si es GET, mostramos el formulario
     return render_template("login.html")
 
 
@@ -66,16 +66,13 @@ def login():
 def register():
     if request.method == "POST":
 
-        # 1️⃣ Recogemos los datos enviados desde el formulario HTML
         usuario = request.form["user"]
         password = request.form["password"]
         email = request.form["email"]
 
-        # 2️⃣ Abrimos conexión con la base de datos
         conn = conectarCampus()
         cursor = conn.cursor()
 
-        # 3️⃣ Comprobamos si ya existe un usuario con ese nombre o email
         cursor.execute(
             """
             SELECT * FROM users 
@@ -87,26 +84,27 @@ def register():
 
         usuario_existente = cursor.fetchone()
 
-        # 4️⃣ Si existe, cancelamos el registro
         if usuario_existente:
             cursor.close()
             conn.close()
-            return "El usuario o el email ya existen"
 
-        # 5️⃣ Si no existe, insertamos el nuevo usuario
+            # ❌ Registro incorrecto → volvemos al formulario
+            return render_template(
+                "register.html",
+                error="El usuario o el email ya existen",
+                usuario=usuario,
+                email=email
+            )
+
         cursor.execute(
             "INSERT INTO users (user_name, password, user_email) VALUES (%s, %s, %s)",
             (usuario, password, email)
         )
 
-        # 6️⃣ Guardamos los cambios en la base de datos
         conn.commit()
-
-        # 7️⃣ Cerramos conexión
         cursor.close()
         conn.close()
 
-        # 8️⃣ Mostramos los datos del usuario registrado
         return render_template(
             "user.html",
             usuario=usuario,
@@ -114,5 +112,5 @@ def register():
             email=email
         )
 
-    # Si es GET, mostramos el formulario de registro
     return render_template("register.html")
+
