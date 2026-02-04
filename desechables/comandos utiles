@@ -1,0 +1,13 @@
+py -3 -m venv .venv (crrear el entorno)
+
+
+.venv\Scripts\activate (activar .venv)
+
+pip install Flask (Instalación de FLASK Framework)
+
+
+Flask --app app run (Ejecutar aplicación)
+
+Ctrl + C => Cerrar aplicación
+
+cls => Limpiar terminal
