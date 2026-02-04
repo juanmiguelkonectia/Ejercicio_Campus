@@ -2,9 +2,9 @@
 
 {% block content %}
 
-<h2>Login</h2>
+<h2>Registro de usuario</h2>
 
-<form method="POST" action="/login">
+<form method="POST" action="/register">
 
     <label>Usuario:</label>
     <input type="text" name="user" required><br><br>
@@ -12,7 +12,10 @@
     <label>Password:</label>
     <input type="password" name="password" required><br><br>
 
-    <button type="submit">Entrar</button>
+    <label>Email:</label>
+    <input type="email" name="email" required><br><br>
+
+    <button type="submit">Registrarse</button>
 
 </form>
 
