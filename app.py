@@ -1,3 +1,4 @@
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, render_template, request
 import psycopg2 
 
@@ -28,14 +29,15 @@ def login():
     if request.method == "POST":
 
         usuario = request.form["user"]
-        password = request.form["password"]
+        password_plana = request.form["password"]
 
         conn = conectarCampus()
         cursor = conn.cursor()
 
+        # Buscamos el usuario SOLO por nombre
         cursor.execute(
-            "SELECT * FROM users WHERE user_name = %s AND password = %s",
-            (usuario, password)
+            "SELECT * FROM users WHERE user_name = %s",
+            (usuario,)
         )
 
         user = cursor.fetchone()
@@ -43,16 +45,15 @@ def login():
         cursor.close()
         conn.close()
 
-        # Si el usuario existe
-        if user:
+        # Si el usuario existe y la contraseña coincide
+        if user and check_password_hash(user[2], password_plana):
             return render_template(
                 "user.html",
                 usuario=user[1],
-                password=user[2],
+                password="(oculta por seguridad)",
                 email=user[3]
             )
         else:
-            # ❌ Login incorrecto → volvemos al login con mensaje
             return render_template(
                 "login.html",
                 error="Usuario o contraseña incorrectos"
@@ -61,18 +62,20 @@ def login():
     return render_template("login.html")
 
 
+
 # -------- REGISTRO --------
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
 
         usuario = request.form["user"]
-        password = request.form["password"]
+        password_plana = request.form["password"]
         email = request.form["email"]
 
         conn = conectarCampus()
         cursor = conn.cursor()
 
+        # Comprobamos si ya existe usuario o email
         cursor.execute(
             """
             SELECT * FROM users 
@@ -87,8 +90,6 @@ def register():
         if usuario_existente:
             cursor.close()
             conn.close()
-
-            # ❌ Registro incorrecto → volvemos al formulario
             return render_template(
                 "register.html",
                 error="El usuario o el email ya existen",
@@ -96,9 +97,13 @@ def register():
                 email=email
             )
 
+        # 🔐 Hasheamos la contraseña
+        password_hash = generate_password_hash(password_plana)
+
+        # Insertamos el usuario con la contraseña hasheada
         cursor.execute(
             "INSERT INTO users (user_name, password, user_email) VALUES (%s, %s, %s)",
-            (usuario, password, email)
+            (usuario, password_hash, email)
         )
 
         conn.commit()
@@ -108,9 +113,10 @@ def register():
         return render_template(
             "user.html",
             usuario=usuario,
-            password=password,
+            password="(oculta por seguridad)",
             email=email
         )
 
     return render_template("register.html")
+
 
