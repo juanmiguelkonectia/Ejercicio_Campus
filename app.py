@@ -11,7 +11,8 @@ def conectarCampus():
         port="5432",
         database="campus",
         user="postgres",
-        password="admin"
+        password="0000",
+        client_encoding='utf-8'  # Añade esta línea aquí
     )
     return conexion
 
