@@ -10,6 +10,8 @@ load_dotenv()
 
 app = Flask(__name__)
 
+
+
 # Función para conectar con la base de datos Campus
 def conectarCampus():
     
