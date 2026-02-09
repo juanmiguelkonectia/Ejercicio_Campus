@@ -1,22 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-    <style>
-        body {
-            background-color: rgb(14, 178, 232);
-        }
-    </style>
-    <h2>Datos Recibidos</h2>
-    <p>Nombre de usuario: {{ usuario }}</p>
-    <p>Contraseña: {{ password }}</p>
-    <p>Correo electrónico: {{ email }}</p>
-    <a href="/login">Volver al login</a>
-
-</body>
-</html>
+{% block content %}
+<h2>Datos Recibidos</h2>
+<p>Nombre de usuario: {{ usuario }}</p>
+<p>Contraseña: {{ password }}</p>
+<p>Correo electrónico: {{ email }}</p>
+<a href="/login" class="btn">Volver al login</a>
+{% endblock %}

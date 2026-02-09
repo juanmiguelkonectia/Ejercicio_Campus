@@ -1,23 +1,37 @@
+<!-- <form method="POST" action="/login">
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+    <input type="text" name="user" placeholder="Username" required autocomplete="off">
+    <input type="password" name="password" placeholder="Password" required autocomplete="off">
+    <button type="submit">Sign In</button>
+    <a href="#" class="secondary">Forgot Password</a>
+    <a href="/register" class="secondary">Sign Up</a>
+</form> -->
+
+
+
 {% extends "base.html" %}
 
 {% block content %}
 
-<h2>Login</h2>
-
-{% if error %}
-    <p style="color:red;">{{ error }}</p>
-{% endif %}
+<h2>Iniciar Sesión</h2>
 
 <form method="POST" action="/login">
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
 
     <label>Usuario:</label>
-    <input type="text" name="user" required autocomplete="off"><br><br>
+    <input type="text" name="user" placeholder="Usuario" required autocomplete="off"><br><br>
 
-    <label>Password:</label>
-    <input type="password" name="password" required autocomplete="off"><br><br>
+    <label>Contraseña:</label>
+    <input type="password" name="password" placeholder="Contraseña" required autocomplete="off"><br><br>
 
     <button type="submit">Entrar</button>
-
+    
+    <a href="#" class="secondary">Olvidaste tu contraseña?</a>
+    <a href="/register" class="secondary">Registrarse</a>
 </form>
 
 {% endblock %}

@@ -1,0 +1,151 @@
+/* =========================================================
+   Estilo Dark / Neón para todo el sitio
+   Comentado línea a línea para tus apuntes
+   ========================================================= */
+
+/* =====================
+   Reset y box-sizing
+   ===================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Evita problemas de ancho/padding */
+}
+
+/* =====================
+   Body
+   ===================== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente moderna y legible */
+    background-color: #121212; /* Fondo muy oscuro */
+    color: #ffffff; /* Texto principal blanco */
+    height: 100vh; /* Para centrar verticalmente */
+    display: flex;
+    justify-content: center; /* Centrado horizontal */
+    align-items: center;     /* Centrado vertical */
+}
+
+/* =====================
+   Encabezado
+   ===================== */
+header {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    text-align: center;
+    color: #0eb2e8; /* Azul neón */
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-size: 1.8rem;
+}
+
+/* =====================
+   Tarjeta principal (main)
+   ===================== */
+main {
+    background: #1e1e2f; /* Tarjeta ligeramente más clara que el fondo */
+    padding: 40px;
+    border-radius: 15px; /* Bordes redondeados */
+    box-shadow: 
+        0 0 20px #0eb2e8,      /* Glow azul exterior */
+        0 0 40px #ff2d95;      /* Glow rosa exterior */
+    width: 350px; /* Ancho fijo similar al ejemplo */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* =====================
+   Títulos dentro de la tarjeta
+   ===================== */
+h2 {
+    color: #ffffff;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+/* =====================
+   Inputs de formularios
+   ===================== */
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+    width: 100%; /* Ocupa todo el ancho de la tarjeta */
+    padding: 12px 15px; /* Espaciado interno */
+    margin-bottom: 20px;
+    border-radius: 8px; /* Bordes redondeados */
+    border: 1px solid #444; /* Borde gris oscuro */
+    background-color: #2a2a3c; /* Fondo input más oscuro que la tarjeta */
+    color: #fff;
+    font-size: 1rem;
+    transition: 0.3s; /* Transición suave para efectos */
+}
+
+/* =====================
+   Efecto glow al enfocar inputs
+   ===================== */
+input:focus {
+    outline: none;
+    border: 1px solid #0eb2e8; /* Borde azul neón */
+    box-shadow: 0 0 8px #0eb2e8; /* Glow azul */
+}
+
+/* =====================
+   Botones principales
+   ===================== */
+button, .btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: #0eb2e8; /* Azul neón */
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* =====================
+   Hover efecto botones
+   ===================== */
+button:hover, .btn:hover {
+    background-color: #08a3d1; /* Azul más intenso */
+    box-shadow: 0 0 10px #0eb2e8; /* Glow al pasar el mouse */
+    transform: translateY(-2px); /* Elevación sutil */
+}
+
+/* =====================
+   Enlaces secundarios (Sign up / Forgot)
+   ===================== */
+a.secondary {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #ff2d95; /* Rosa neón */
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+a.secondary:hover {
+    color: #ff66b2; /* Rosa más claro al pasar mouse */
+}
+
+/* =====================
+   Mensajes de error
+   ===================== */
+p.error {
+    color: #ff4d4f; /* Rojo brillante */
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* =====================
+   Centramos links en index.html
+   ===================== */
+main a {
+    display: block;
+    margin: 10px 0;
+    text-align: center;
+}
