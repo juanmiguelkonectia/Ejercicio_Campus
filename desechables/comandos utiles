@@ -11,3 +11,6 @@ Flask --app app run (Ejecutar aplicación)
 Ctrl + C => Cerrar aplicación
 
 cls => Limpiar terminal
+
+
+#client_encoding='utf-8'  # Esta instrucción sirve para que tu programa y la base de datos hablen el mismo idioma visual. Define que los datos se enviarán y recibirán usando el código UTF-8, que es el estándar universal.

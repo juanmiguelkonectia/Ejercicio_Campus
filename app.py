@@ -1,26 +1,32 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, render_template, request
 import psycopg2 
+from dotenv import load_dotenv
+import os
+
+
+#Cargar variables de entorno desde archivo.env
+load_dotenv()
 
 app = Flask(__name__)
 
 # Función para conectar con la base de datos Campus
 def conectarCampus():
+    
     conexion = psycopg2.connect(
-        host="localhost",
-        port="5432",
-        database="campus",
-        user="postgres",
-        password="0000",
-        client_encoding='utf-8'  # Añade esta línea aquí
+        host=os.getenv("DB_HOST"),
+        port=os.getenv("DB_PORT"),
+        database=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD")
     )
     return conexion
-
 
 # Ruta principal
 @app.route("/")
 def index():
     # Mostramos la página inicial con login / registro
+    
     return render_template("index.html")
 
 
