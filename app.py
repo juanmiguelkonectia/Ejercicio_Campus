@@ -1,51 +1,107 @@
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask import Flask, render_template, request
-import psycopg2 
-from dotenv import load_dotenv
+# ===============================
+# IMPORTS
+# ===============================
+
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+import psycopg2
 import os
 
+from dotenv import load_dotenv
+from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
 
-#Cargar variables de entorno desde archivo.env
+
+# ===============================
+# CARGA VARIABLES DE ENTORNO
+# ===============================
+
+# Carga el archivo .env
 load_dotenv()
+
+
+# ===============================
+# CONFIGURACIÓN FLASK
+# ===============================
 
 app = Flask(__name__)
 
+# Clave secreta necesaria para manejar sesiones
+# ⚠️ Debe venir del .env
+app.secret_key = os.getenv("SECRET_KEY")
 
 
-# Función para conectar con la base de datos Campus
+# ===============================
+# CONEXIÓN A LA BASE DE DATOS
+# ===============================
+
 def conectarCampus():
-    
-    conexion = psycopg2.connect(
+    """
+    Crea y devuelve una conexión a PostgreSQL usando
+    variables de entorno (más seguro)
+    """
+    return psycopg2.connect(
         host=os.getenv("DB_HOST"),
         port=os.getenv("DB_PORT"),
         database=os.getenv("DB_NAME"),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD")
     )
-    return conexion
 
-# Ruta principal
+
+# ===============================
+# DECORADOR LOGIN REQUIRED
+# ===============================
+
+def login_required(f):
+    """
+    Decorador que protege rutas:
+    si no hay usuario en sesión → redirige a login
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user_id" not in session:
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+# ===============================
+# RUTA PRINCIPAL
+# ===============================
+
 @app.route("/")
 def index():
-    # Mostramos la página inicial con login / registro
+    """
+    Página principal pública:
+    - Si hay sesión activa → dashboard
+    - Si no hay sesión → mostrar index.html con login y registro
+    """
+    if "user_id" in session:
+        return redirect(url_for("dashboard"))
     
+    # Mostramos la página principal
     return render_template("index.html")
 
 
-# -------- LOGIN --------
+
+
+# ===============================
+# LOGIN
+# ===============================
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == "POST":
 
+    if request.method == "POST":
         usuario = request.form["user"]
-        password_plana = request.form["password"]
+        password = request.form["password"]
 
         conn = conectarCampus()
         cursor = conn.cursor()
 
-        # Buscamos el usuario SOLO por nombre
+        # Buscamos el usuario en la BD
         cursor.execute(
-            "SELECT * FROM users WHERE user_name = %s",
+            "SELECT id_user, user_name, password FROM users WHERE user_name = %s",
             (usuario,)
         )
 
@@ -55,77 +111,97 @@ def login():
         conn.close()
 
         # Si el usuario existe y la contraseña coincide
-        if user and check_password_hash(user[2], password_plana):
-            return render_template(
-                "user.html",
-                usuario=user[1],
-                password="(oculta por seguridad)",
-                email=user[3]
-            )
-        else:
-            return render_template(
-                "login.html",
-                error="Usuario o contraseña incorrectos"
-            )
+        if user and check_password_hash(user[2], password):
+
+            # Guardamos datos en sesión
+            session["user_id"] = user[0]
+            session["user_name"] = user[1]
+
+            return redirect(url_for("dashboard"))
+
+        # Si falla el login
+        flash("Usuario o contraseña incorrectos")
 
     return render_template("login.html")
 
 
+# ===============================
+# REGISTRO
+# ===============================
 
-# -------- REGISTRO --------
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    if request.method == "POST":
 
+    if request.method == "POST":
         usuario = request.form["user"]
-        password_plana = request.form["password"]
+        password = request.form["password"]
         email = request.form["email"]
+
+        # Hasheamos la contraseña
+        hashed_password = generate_password_hash(password)
 
         conn = conectarCampus()
         cursor = conn.cursor()
 
-        # Comprobamos si ya existe usuario o email
+        # Comprobamos si el usuario o email ya existen
         cursor.execute(
-            """
-            SELECT * FROM users 
-            WHERE user_name = %s 
-            OR user_email = %s
-            """,
+            "SELECT id_user FROM users WHERE user_name = %s OR user_email = %s",
             (usuario, email)
         )
 
-        usuario_existente = cursor.fetchone()
-
-        if usuario_existente:
+        if cursor.fetchone():
+            flash("El usuario o el email ya existen")
             cursor.close()
             conn.close()
-            return render_template(
-                "register.html",
-                error="El usuario o el email ya existen",
-                usuario=usuario,
-                email=email
-            )
+            return render_template("register.html")
 
-        # 🔐 Hasheamos la contraseña
-        password_hash = generate_password_hash(password_plana)
-
-        # Insertamos el usuario con la contraseña hasheada
+        # Insertamos el nuevo usuario
         cursor.execute(
-            "INSERT INTO users (user_name, password, user_email) VALUES (%s, %s, %s)",
-            (usuario, password_hash, email)
+            """
+            INSERT INTO users (user_name, password, user_email)
+            VALUES (%s, %s, %s)
+            """,
+            (usuario, hashed_password, email)
         )
 
         conn.commit()
         cursor.close()
         conn.close()
 
-        return render_template(
-            "user.html",
-            usuario=usuario,
-            password="(oculta por seguridad)",
-            email=email
-        )
+        flash("Registro correcto. Ya puedes iniciar sesión")
+        return redirect(url_for("login"))
 
     return render_template("register.html")
 
 
+# ===============================
+# DASHBOARD (ZONA PRIVADA)
+# ===============================
+
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    return render_template(
+        "dashboard.html",
+        usuario=session["user_name"]
+    )
+
+
+# ===============================
+# LOGOUT
+# ===============================
+
+@app.route("/logout")
+@login_required
+def logout():
+    # Eliminamos toda la sesión
+    session.clear()
+    return redirect(url_for("login"))
+
+
+# ===============================
+# ARRANQUE APP
+# ===============================
+
+if __name__ == "__main__":
+    app.run(debug=True)

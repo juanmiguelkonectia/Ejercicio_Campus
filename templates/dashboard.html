@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <!-- Página privada, solo accesible con sesión activa -->
+    <h2>Bienvenido al dashboard</h2>
+
+    <!-- Mostramos el nombre guardado en la sesión -->
+    <p>Hola, {{ usuario }} 👋</p>
+
+    <!-- Enlace para cerrar sesión -->
+    <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+
+{% endblock %}

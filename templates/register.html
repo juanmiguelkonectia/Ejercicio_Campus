@@ -11,13 +11,13 @@
 <form method="POST" action="/register">
 
     <label>Usuario:</label>
-    <input type="text" name="user" required value="{{ usuario | default('') }}"><br><br>
+    <input type="text" name="user" required autocomplete="off" value="{{ usuario | default('') }}"><br><br>
 
     <label>Password:</label>
-    <input type="password" name="password" required><br><br>
+    <input type="password" name="password" required autocomplete="off"><br><br>
 
     <label>Email:</label>
-    <input type="email" name="email" required value="{{ email | default('') }}"><br><br>
+    <input type="email" name="email" required autocomplete="off" value="{{ email | default('') }}"><br><br>
 
     <button type="submit">Registrarse</button>
 
