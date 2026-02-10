@@ -19,7 +19,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente moderna y legible */
     background-color: #121212; /* Fondo muy oscuro */
     color: #ffffff; /* Texto principal blanco */
-    height: 100vh; /* Para centrar verticalmente */
+    height: 110vh; /* Para centrar verticalmente */
     display: flex;
     justify-content: center; /* Centrado horizontal */
     align-items: center;     /* Centrado vertical */
