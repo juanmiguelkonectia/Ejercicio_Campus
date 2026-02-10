@@ -89,7 +89,7 @@ Antes de ejecutar el proyecto, asegúrate de tener instalado:
 ### 1️⃣ Clonar el repositorio
 
 ```bash
-git clone https://github.com/Thibor82/campus.git
+git clone https://github.com/juanmiguelkonectia/Ejercicio_Campus.git
 cd campus
 ```
 
@@ -98,7 +98,7 @@ cd campus
 **En Windows (PowerShell):**
 ```bash
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+.\.venv\Scripts\activate
 ```
 
 **En macOS/Linux:**
@@ -294,8 +294,8 @@ Todas las páginas extienden esta plantilla, proporcionando un diseño consisten
 **Formulario enviado:**
 ```
 POST /login
-├── user: "juan_miguel"
-└── password: "micontraseña123"
+├── user: "nombre_usuario"
+└── password: "sucontraseña123"
 ```
 
 ---
